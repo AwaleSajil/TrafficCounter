@@ -14,7 +14,7 @@ for f in files:
 from sort import *
 tracker = Sort()
 memory = {}
-line = [(59, 555), (964, 578)]
+line = [(59, 555), (964, 578)]		#detector line
 counter = 0
 
 ##
@@ -35,7 +35,7 @@ ap.add_argument("-y", "--yolo", required=True,
 	help="base path to YOLO directory")
 ap.add_argument("-c", "--confidence", type=float, default=0.5,
 	help="minimum probability to filter weak detections")
-ap.add_argument("-t", "--threshold", type=float, default=0.3,
+ap.add_argument("-t", "--threshold", type=float, default=0.25,
 	help="threshold when applyong non-maxima suppression")
 args = vars(ap.parse_args())
 
@@ -133,7 +133,7 @@ while True:
 			# extract the class ID and confidence (i.e., probability)
 			# of the current object detection
 			scores = detection[5:]
-			classID = np.argmax(scores) #find the class which has the maximum probablity and save the index of it on it.
+			classID = np.argmax(scores)
 			confidence = scores[classID]
 
 			# filter out weak predictions by ensuring the detected
@@ -161,7 +161,7 @@ while True:
 	# apply non-maxima suppression to suppress weak, overlapping
 	# bounding boxes
 	idxs = cv2.dnn.NMSBoxes(boxes, confidences, args["confidence"], args["threshold"])
-	#idxs are the indexes of the detections that passed the non max suppression
+
 	dets = []
 	if len(idxs) > 0:
 		# loop over the indexes we are keeping
@@ -173,6 +173,7 @@ while True:
 	np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 	dets = np.asarray(dets)	#converts list in to array
 	tracks = tracker.update(dets)
+
 
 	boxes = []
 	indexIDs = []
@@ -222,7 +223,7 @@ while True:
 
 
 			text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
-			#text = "{}".format(indexIDs[i])
+			# text = "{}".format(indexIDs[i])
 			cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 			i += 1
 
@@ -233,7 +234,7 @@ while True:
     #syntax of puttext
     #cv2.putText(image, text to print, (xstart,ystart), font , Size, color, xxx)
 	tmp_text = '||Bicycle: ' + str(bicycle) + '|| ' + '||Car: ' + str(car) + '|| ' + '||Bike: ' + str(motorbike) + '|| ' + '||Bus: ' + str(bus) + '|| ' + '||Truck: ' + str(truck) + '|| '
-	cv2.putText(frame, str(tmp_text), (100,150), cv2.FONT_HERSHEY_DUPLEX, 1.3, (255, 255, 255), 2)
+	cv2.putText(frame, str(tmp_text), (50,150), cv2.FONT_HERSHEY_DUPLEX, 1.3, (255, 255, 255), 2)
 	# counter += 1
 
 	# saves image file
